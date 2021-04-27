@@ -43,6 +43,7 @@ app.get('/:query', async(req, res) => {
     try {
         //Get your ip address in order to get your location (long and lat)
         const ip=await publicIp.v4()
+        console.log("IP", ip)
         const userLocation=await got("https://ipapi.co/"+ip+"/json/").json();
         const origin=userLocation.latitude+","+userLocation.longitude
         //Connect to the proper table based on your query (food, clothing or housing)
