@@ -1,8 +1,7 @@
-//Importing node modules: dotenv, MongoDB, got, express and public-ip
+//Importing node modules: dotenv, MongoDB, got and epress
 require('dotenv').config()
 const {MongoClient} = require('mongodb')
 const got = require('got');
-const publicIp = require('public-ip');
 const prefix='https://maps.googleapis.com/maps/api/distancematrix/json?units=imperial&origins=';
 const uri=process.env.DATABASE_URL
 const client = new MongoClient(uri, {
@@ -42,9 +41,9 @@ app.get('/:query', async(req, res) => {
     let resourcesArray=[]
     try {
         //Get your ip address in order to get your location (long and lat)
-        const ip=await publicIp.v4()
-        console.log("IP", ip)
-        const userLocation=await got("https://ipapi.co/"+ip+"/json/").json();
+        const ip=await got("https://ifconfig.co/ip")
+        console.log("IP", ip.body)
+        const userLocation=await got("https://ipapi.co/"+ip.body+"/json/").json();
         const origin=userLocation.latitude+","+userLocation.longitude
         //Connect to the proper table based on your query (food, clothing or housing)
         let table=req.params.query
