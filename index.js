@@ -32,7 +32,7 @@ let getDistance=async(element, resourcesArray, origin)=>{
         distance=response.rows[0].elements[0].distance.text
     }catch(err){
         value=0
-        distance="Error"
+        distance="Not found"
     }
     //Push all data about the resource as well as its distance from the user to a new array
     resourcesArray.push({...element, distance: distance, value: value})
