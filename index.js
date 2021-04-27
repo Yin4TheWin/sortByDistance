@@ -20,7 +20,7 @@ const app = express()
 let port=process.env.PORT || 3000;
 //Async function that computes the distance from a location to the user's current location
 let getDistance=async(element, resourcesArray, origin)=>{
-    const dest=element.address+" "+element.county
+    const dest=element.address+" "+element.city
     //Uses the google maps API, the link to access the api is built here and accessed with the "got" package
     //Distance matrix API documentation https://developers.google.com/maps/documentation/distance-matrix/overview
     const response = await got(prefix+origin+'&destinations='+dest+'&key='+process.env.API_KEY).json();
