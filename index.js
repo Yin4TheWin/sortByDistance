@@ -69,6 +69,7 @@ app.get('/:query', async(req, res) => {
 		console.log(error);
 	}
     //Send completed array as response
+    res.set('Access-Control-Allow-Origin', '*')
     res.send(resourcesArray)
 })
 
