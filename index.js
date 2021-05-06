@@ -49,22 +49,28 @@ app.get('/:query', async(req, res) => {
         //Connect to the proper table based on your query (food, clothing or housing)
         let table=req.params.query
         let db = client.db('resources')
-        let cursor = db.collection(table+'Info').find({});
-        let tempArray=await cursor.toArray()
-        //Instantiate a promises array. We are using a for loop to iterate through all the elements so this promise
-        //array lets us do everything asynchronously (using await would make every request run one at a time instead of all at once,
-        //which is super slow because the tables may have 50+ entries)
-        //Info about promises: https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise
-        let promises=[]
-        for(let i=0;i<tempArray.length;i++){
-            let element=tempArray[i]
-            //Call our async function on line 21 and store in promises array
-            promises.push(getDistance(element, resourcesArray, origin))
+        if(req.params.query==='employment'){
+            db = client.db('employment')
+            let cursor = db.collection(table+'Info').find({});
+            resourcesArray=await cursor.toArray()
+        } else{
+            let cursor = db.collection(table+'Info').find({});
+            let tempArray=await cursor.toArray()
+            //Instantiate a promises array. We are using a for loop to iterate through all the elements so this promise
+            //array lets us do everything asynchronously (using await would make every request run one at a time instead of all at once,
+            //which is super slow because the tables may have 50+ entries)
+            //Info about promises: https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise
+            let promises=[]
+            for(let i=0;i<tempArray.length;i++){
+                let element=tempArray[i]
+                //Call our async function on line 21 and store in promises array
+                promises.push(getDistance(element, resourcesArray, origin))
+            }
+            //Wait for all promises to execute
+            //Promise.all documentation https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise/all
+            await Promise.all(promises)
+            resourcesArray.sort((a, b) => (a.value > b.value) ? 1 : -1)
         }
-        //Wait for all promises to execute
-        //Promise.all documentation https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise/all
-        await Promise.all(promises)
-        resourcesArray.sort((a, b) => (a.value > b.value) ? 1 : -1)
 	} catch (error) {
 		console.log(error);
 	}
