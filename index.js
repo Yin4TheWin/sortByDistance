@@ -38,7 +38,7 @@ let getDistance=async(element, resourcesArray, origin)=>{
     resourcesArray.push({...element, distance: distance, value: value})
  }
  //API endpoint which returns the data from mongoDB, sorted by increasing distance from user.
-app.get('/:query', async(req, res) => {
+app.get('/dist/:query', async(req, res) => {
     let resourcesArray=[]
     try {
         //Get your ip address in order to get your location (long and lat)
@@ -71,6 +71,25 @@ app.get('/:query', async(req, res) => {
             await Promise.all(promises)
             resourcesArray.sort((a, b) => (a.value > b.value) ? 1 : -1)
         }
+	} catch (error) {
+		console.log(error);
+	}
+    //Send completed array as response
+    res.set('Access-Control-Allow-Origin', '*')
+    res.send(resourcesArray)
+})
+
+ //API endpoint which returns the data from mongoDB unsorted
+ app.get('/:query', async(req, res) => {
+    let resourcesArray=[]
+    try {
+        //Connect to the proper table based on your query (food, clothing or housing)
+        let table=req.params.query
+        let db = client.db('resources')
+        if(req.params.query==='employment')
+            db = client.db('employment')
+        let cursor = db.collection(table+'Info').find({});
+        resourcesArray=await cursor.toArray()
 	} catch (error) {
 		console.log(error);
 	}
