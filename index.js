@@ -89,7 +89,10 @@ app.get('/dist/:query', async(req, res) => {
         if(req.params.query==='employment')
             db = client.db('employment')
         let cursor = db.collection(table+'Info').find({});
-        resourcesArray=await cursor.toArray()
+        let tempArray=await cursor.toArray()
+        tempArray.forEach(el=>{
+            resourcesArray.push({...el, distance: "Use sort by location to view"})
+        })
 	} catch (error) {
 		console.log(error);
 	}
